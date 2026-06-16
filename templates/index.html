@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 文献总结器</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI 文献总结器</h1>
+            <p>选择包含 PDF 文献的文件夹，AI 自动提取结构化信息</p>
+            <a href="/settings" class="btn-link">⚙ API 设置</a>
+        </header>
+
+        <section class="controls">
+            <div class="input-group">
+                <label>文献文件夹路径</label>
+                <input type="text" id="folderPath" placeholder="例如：C:\Users\Documents\papers">
+                <button id="btnScan">扫描文件夹</button>
+            </div>
+
+            <div id="scanResult" class="result-hint"></div>
+
+            <button id="btnAnalyze" class="btn-primary" disabled>开始分析</button>
+
+            <div id="progressBar" class="progress" style="display:none">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div id="progressText" class="progress-text"></div>
+        </section>
+
+        <section id="resultsSection" style="display:none">
+            <div class="results-header">
+                <h2>分析结果</h2>
+                <button id="btnExport" class="btn-primary">导出 CSV</button>
+            </div>
+            <div class="table-wrapper">
+                <table id="resultsTable">
+                    <thead>
+                        <tr>
+                            <th>文件名</th>
+                            <th>题目</th>
+                            <th>作者</th>
+                            <th>发表期刊/会议</th>
+                            <th>发表年份</th>
+                            <th>关键词</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="resultDetail" class="detail-panel"></div>
+        </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

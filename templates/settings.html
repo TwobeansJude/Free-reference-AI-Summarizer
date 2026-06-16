@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 设置 - AI 文献总结器</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>API 设置</h1>
+            <a href="/" class="btn-link">← 返回主页</a>
+        </header>
+
+        <section class="settings-form">
+            <div class="input-group">
+                <label>API 密钥</label>
+                <input type="password" id="apiKey" placeholder="sk-...">
+            </div>
+            <div class="input-group">
+                <label>API 地址</label>
+                <input type="text" id="apiUrl" value="https://api.deepseek.com" placeholder="https://api.deepseek.com">
+            </div>
+            <div class="input-group">
+                <label>模型名称</label>
+                <input type="text" id="modelName" value="deepseek-chat" placeholder="deepseek-chat">
+            </div>
+            <button id="btnSave" class="btn-primary">保存设置</button>
+            <div id="saveResult" class="result-hint"></div>
+        </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

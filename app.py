@@ -18,7 +18,7 @@ pdf_files_list = []
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Origin'] = 'http://localhost:5000'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     return response
@@ -237,23 +237,36 @@ def call_ai_api(text, api_config):
 def validate_path():
     data = request.get_json()
     folder_path = data.get('folder_path', '').strip()
-    
+
+    # 安全校验：路径不能为空
     if not folder_path:
         return jsonify({'valid': False, 'error': '请输入文件夹路径'})
-    
-    path = Path(folder_path)
-    
+
+    # 安全校验：拒绝敏感系统路径
+    dangerous_paths = ['/etc', '/sys', '/proc', '/dev', 'C:\\Windows', 'C:\\windows',
+                       'C:\\WINDOWS', '/root', '/var/log', '/var/run']
+    folder_lower = folder_path.lower().replace('\\', '/')
+    for dangerous in dangerous_paths:
+        if folder_lower.startswith(dangerous.lower().replace('\\', '/')):
+            return jsonify({'valid': False, 'error': '不允许访问系统目录'})
+
+    path = Path(folder_path).resolve()
+
     if not path.exists():
         return jsonify({'valid': False, 'error': '文件夹路径不存在'})
-    
+
     if not path.is_dir():
         return jsonify({'valid': False, 'error': '该路径不是文件夹'})
-    
+
+    # 安全校验：拒绝访问隐藏目录（以 . 开头）
+    if any(part.startswith('.') for part in path.parts):
+        return jsonify({'valid': False, 'error': '不允许访问隐藏目录'})
+
     pdf_files = list(path.rglob('*.pdf'))
-    
+
     if len(pdf_files) == 0:
         return jsonify({'valid': False, 'error': '该文件夹中没有PDF文件'})
-    
+
     return jsonify({'valid': True, 'message': f'找到 {len(pdf_files)} 个PDF文件'})
 
 @app.route('/api/scan', methods=['POST'])
@@ -366,17 +379,15 @@ def analyze_pdfs(folder_path, api_config):
 
         except Exception as e:
             import traceback
-            error_detail = traceback.format_exc()
             error_msg = str(e)
-            print(f"[ERROR] 处理文件 {pdf_file['name']} 时出错:")
-            print(f"[ERROR] {error_msg}")
-            print(f"[ERROR] 详细:\n{error_detail}")
-            
+            print(f"[ERROR] 处理文件 {pdf_file['name']} 时出错: {error_msg}")
+            traceback.print_exc()  # 仅在服务器控制台输出，不返回给客户端
+
             analysis_results.append({
                 '文件名': pdf_file['name'],
                 '文件路径': pdf_file['path'],
                 '题目': '(解析失败)',
-                '错误信息': f"{error_msg} | {error_detail[:200]}",
+                '错误信息': error_msg,  # 只返回错误消息，不暴露堆栈
                 '作者': '', '摘要': '', '研究问题': '', '使用理论': '',
                 '研究方法': '', '研究步骤': '', '研究结果': '', '贡献': '',
                 '关键词': '', '发表期刊/会议': '', '发表年份': '', '研究局限性': ''
