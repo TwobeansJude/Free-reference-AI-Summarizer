@@ -3,58 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 文献总结器</title>
+    <title>文献浏览器 - AI智能分析</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>AI 文献总结器</h1>
-            <p>选择包含 PDF 文献的文件夹，AI 自动提取结构化信息</p>
-            <a href="/settings" class="btn-link">⚙ API 设置</a>
-        </header>
+    <header class="header">
+        <h1>📚 文献浏览器</h1>
+        <div class="header-right">
+            <span id="apiStatus" class="api-status not-configured">⚠️ 请先配置API</span>
+            <a href="/settings" class="header-btn">⚙️ 设置</a>
+        </div>
+    </header>
 
-        <section class="controls">
+    <main class="main-content">
+        <!-- 步骤1: 选择文件夹 -->
+        <div class="card">
+            <div class="card-header">
+                <span class="step-number">1</span>
+                <h2>选择文献文件夹</h2>
+            </div>
             <div class="input-group">
-                <label>文献文件夹路径</label>
-                <input type="text" id="folderPath" placeholder="例如：C:\Users\Documents\papers">
-                <button id="btnScan">扫描文件夹</button>
+                <label for="folderPath">文件夹路径</label>
+                <div class="folder-input-row">
+                    <input type="text" id="folderPath" placeholder="请输入包含PDF文献的文件夹路径，例如：C:\Documents\Papers">
+                    <button class="btn btn-secondary" id="validatePathBtn">验证</button>
+                </div>
+                <div id="pathValidation" style="margin-top: 8px; font-size: 13px;"></div>
             </div>
+            <button class="btn btn-primary" id="scanBtn" disabled>🔍 扫描文件夹</button>
+            <div id="scanResult" class="result-box" style="display: none;"></div>
+        </div>
 
-            <div id="scanResult" class="result-hint"></div>
-
-            <button id="btnAnalyze" class="btn-primary" disabled>开始分析</button>
-
-            <div id="progressBar" class="progress" style="display:none">
-                <div class="progress-fill" id="progressFill"></div>
+        <!-- 步骤2: AI分析 -->
+        <div class="card hidden" id="analysisCard">
+            <div class="card-header">
+                <span class="step-number">2</span>
+                <h2>AI分析</h2>
             </div>
-            <div id="progressText" class="progress-text"></div>
-        </section>
-
-        <section id="resultsSection" style="display:none">
-            <div class="results-header">
-                <h2>分析结果</h2>
-                <button id="btnExport" class="btn-primary">导出 CSV</button>
+            <button class="btn btn-primary btn-large" id="analyzeBtn" disabled>🤖 开始AI分析</button>
+            <div class="progress-container hidden" id="progressContainer">
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar" id="progressBar" style="width: 0%;">0%</div>
+                </div>
+                <div class="progress-info" id="progressInfo">
+                    正在处理: <span id="currentFile">-</span>
+                </div>
             </div>
-            <div class="table-wrapper">
-                <table id="resultsTable">
+            <div id="analysisResult" class="result-box" style="display: none;"></div>
+        </div>
+
+        <!-- 步骤3: 结果预览 -->
+        <div class="card hidden" id="previewCard">
+            <div class="card-header">
+                <span class="step-number">3</span>
+                <h2>📊 分析结果预览</h2>
+            </div>
+            <div id="errorSummary" class="error-summary hidden"></div>
+            <div id="previewContainer" class="preview-section">
+                <table id="previewTable" class="preview-table">
                     <thead>
                         <tr>
                             <th>文件名</th>
                             <th>题目</th>
                             <th>作者</th>
-                            <th>发表期刊/会议</th>
                             <th>发表年份</th>
-                            <th>关键词</th>
+                            <th>期刊/会议</th>
                             <th>状态</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="previewTableBody"></tbody>
                 </table>
             </div>
-            <div id="resultDetail" class="detail-panel"></div>
-        </section>
+            <div class="export-section">
+                <button class="btn btn-success btn-large" id="exportBtn">📄 导出CSV文件</button>
+                <p style="margin-top: 16px; color: #718096; font-size: 14px;">文件名将包含时间戳，便于管理</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- 详情弹窗 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">文献详情</h3>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
     </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
 
     <script src="/static/app.js"></script>
 </body>

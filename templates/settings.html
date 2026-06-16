@@ -3,32 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API 设置 - AI 文献总结器</title>
+    <title>设置 - 文献浏览器</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>API 设置</h1>
-            <a href="/" class="btn-link">← 返回主页</a>
-        </header>
+<body style="padding: 40px 20px;">
+    <div class="settings-container">
+        <div class="settings-header">
+            <h1>⚙️ API 设置</h1>
+            <p>配置您的AI API密钥</p>
+        </div>
 
-        <section class="settings-form">
-            <div class="input-group">
-                <label>API 密钥</label>
-                <input type="password" id="apiKey" placeholder="sk-...">
+        <div class="card">
+            <h2 style="color:#2d3748;font-size:20px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #e2e8f0;">🔑 API配置</h2>
+
+            <div class="form-group">
+                <label for="apiUrl">API 地址</label>
+                <input type="text" id="apiUrl" placeholder="https://api.deepseek.com/v1">
+                <div class="hint">DeepSeek API地址示例: https://api.deepseek.com/v1</div>
             </div>
-            <div class="input-group">
-                <label>API 地址</label>
-                <input type="text" id="apiUrl" value="https://api.deepseek.com" placeholder="https://api.deepseek.com">
+
+            <div class="form-group">
+                <label for="apiKey">API 密钥</label>
+                <input type="password" id="apiKey" placeholder="请输入您的API密钥">
+                <div class="hint">您的API密钥将安全存储在浏览器本地，不会上传到任何服务器</div>
             </div>
-            <div class="input-group">
-                <label>模型名称</label>
-                <input type="text" id="modelName" value="deepseek-chat" placeholder="deepseek-chat">
+
+            <div class="form-group">
+                <label for="modelName">模型名称</label>
+                <input type="text" id="modelName" placeholder="deepseek-chat" value="deepseek-chat">
+                <div class="hint">DeepSeek模型: deepseek-chat, deepseek-coder 等</div>
             </div>
-            <button id="btnSave" class="btn-primary">保存设置</button>
-            <div id="saveResult" class="result-hint"></div>
-        </section>
+
+            <div id="statusDisplay" class="status-indicator status-pending">⏳ 等待配置</div>
+            <div id="alertContainer"></div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="testBtn">🔗 测试连接</button>
+                <button class="btn btn-secondary" id="saveBtn">💾 保存设置</button>
+                <button class="btn btn-danger" id="clearBtn">🗑️ 清除</button>
+            </div>
+        </div>
+
+        <div class="security-note">
+            <h4>🔒 安全说明</h4>
+            <ul>
+                <li>您的API密钥<strong>仅</strong>存储在浏览器本地存储中</li>
+                <li>密钥永远不会上传到服务器</li>
+                <li>关闭浏览器后，密钥仍然保留</li>
+                <li>如需删除，请点击「清除」按钮</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="/" class="nav-link">← 返回主页</a>
+        </div>
     </div>
 
     <script src="/static/app.js"></script>
